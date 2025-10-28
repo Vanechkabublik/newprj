@@ -193,18 +193,13 @@ class ReplicateService {
         }
     }
     
-    public function createPrediction($model, $input, $outputFormat = null) {
+    public function createPrediction($model, $input) {
         $ch = curl_init();
         
         $data = [
             'version' => $this->getModelVersion($model),
             'input' => $input
         ];
-
-        // Добавляем формат вывода если указан
-        if ($outputFormat && in_array($outputFormat, ['jpg', 'png', 'webp', 'mp4', 'gif'])) {
-            $data['input']['output_format'] = $outputFormat;
-        }
         
         curl_setopt_array($ch, [
             CURLOPT_URL => "https://api.replicate.com/v1/predictions",
@@ -259,16 +254,6 @@ class ReplicateService {
         ];
         
         return $qualityMap[$quality] ?? '720p';
-    }
-
-    public function getSupportedFormats($model) {
-        $formats = [
-            'ddcolor' => ['jpg', 'png', 'webp'],
-            'restore' => ['jpg', 'png', 'webp'],
-            'pixverse' => ['mp4', 'gif']
-        ];
-        
-        return $formats[$model] ?? ['jpg', 'png'];
     }
     
     private function getModelVersion($model) {

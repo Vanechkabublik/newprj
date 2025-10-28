@@ -31,12 +31,6 @@ try {
         throw new Exception('Prompt too long (max 1000 characters)');
     }
 
-    $format = $_POST['format'] ?? null;
-    $supportedFormats = $replicateService->getSupportedFormats($model);
-    if ($format && !in_array($format, $supportedFormats)) {
-        jsonResponse(false, null, "Unsupported format. Supported: " . implode(', ', $supportedFormats), 400);
-    }
-
     // Загружаем в S3
     $s3Uploader = new S3Uploader();
     $s3Result = $s3Uploader->upload($_FILES['image']);
@@ -49,7 +43,7 @@ try {
         'quality' => $service->formatQuality($_POST['quality'] ?? '720'),
         'aspect_ratio' => $_POST['aspect_ratio'] ?? '1:1',
         'duration' => intval($_POST['duration'] ?? 5)
-    ], $format);
+    ]);
 
     jsonResponse(true, [
         'id' => $result['id'],

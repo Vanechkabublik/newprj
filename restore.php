@@ -22,17 +22,11 @@ try {
     $s3Uploader = new S3Uploader();
     $s3Result = $s3Uploader->upload($_FILES['image']);
 
-    $format = $_POST['format'] ?? null;
-    $supportedFormats = $replicateService->getSupportedFormats($model);
-    if ($format && !in_array($format, $supportedFormats)) {
-        jsonResponse(false, null, "Unsupported format. Supported: " . implode(', ', $supportedFormats), 400);
-    }
-
     // Отправляем в Replicate
     $service = new ReplicateService();
     $result = $service->createPrediction('restore', [
         'input_image' => $s3Result['url']
-    ], $format);
+    ]);
 
     jsonResponse(true, [
         'id' => $result['id'],
